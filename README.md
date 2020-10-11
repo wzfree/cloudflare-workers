@@ -10,7 +10,7 @@
 4. Save & Run.
 
 ## cloudflare-worker-for-google-usercontent
-用于代理 googleusercontent 内容，直接复制粘贴到 cloudflare workers 编辑器即可。例如需要访问：https://xxx.googleusercontent.com/something ，则输入 https://your.path.workers.dev/xxx/something ；访问：https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.folder+30 ，则输入 https://your.path.workers.dev/drive-thirdparty/16/type/application/vnd.google-apps.folder+30 。
+用于代理 googleusercontent 内容，直接复制粘贴到 cloudflare workers 编辑器保存，然后设置一个泛域名解析，例如将 *.example.com 解析到该 worker。当需要访问 https://xxx.googleusercontent.com/yyy 时，则替代为 https://xxx.example.com/yyy 。
 
 ## cloudflare-worker-for-google-apis
 用于代理 googleapis 服务，直接复制粘贴到 cloudflare workers 编辑器即可。使用时将 https://www.googleapis.com 替换为 https://your.path.workers.dev 。 
