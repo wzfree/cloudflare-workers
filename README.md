@@ -16,7 +16,7 @@
 用于代理 googleapis 服务，直接复制粘贴到 cloudflare workers 编辑器即可。使用时将 https://www.googleapis.com 替换为 https://your.path.workers.dev 。 
 
 ## cloudflare-worker-for-mirror
-源于另一个项目：https://github.com/xiaoyang-liu-cs/booster.js ，示例：https://wiki.force.workers.dev
+改写自另一个项目：https://github.com/xiaoyang-liu-cs/booster.js ，通过自定义子域名解析后绑定多个镜像。例如 google.yourdomain.com 访问 www.google.com ，wikipedia.yourdomain.com 访问 www.wikipedia.org 。局限：1. 需要登录的网站无法使用；2. 访问 google 有可能会出现流量异常。
 
 ## cloudflare-worker-for-proxy
-源于另一个项目：https://github.com/EtherDream/jsproxy ，示例：https://proxy.force.workers.dev
+克隆自另一个项目：https://github.com/EtherDream/jsproxy ，示例：https://proxy.force.workers.dev
