@@ -230,39 +230,57 @@ addEventListener('fetch', event => {
 async function handleRequest(request) {
     try {
         const url = new URL(request.url)
+        url.pathname = url.pathname.replace(/(.+)(=s\d+)$/, function(match, p1, p2) {
+            url.param = p2
+            return p1
+        })
+
         const metadata = await gd.getMetadata(url.pathname)
         if (!metadata) {
-            return new Response('File Not Found', {
+            return new Response('404: File not found', {
                 status: 404
             })
         }
 
+        // Folder response
         if (metadata.mimeType == GoogleDrive.FOLDER_TYPE) {
             const objects = await gd.getObjects(metadata.id)
+            // JSON format
             if (config.restful) {
                 return new Response(JSON.stringify(objects))
-            } else {
-                return new Response(render(objects), {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8'
-                    }
-                })
             }
-        } else {
-            const range = request.headers.get('Range')
-            const object = await gd.getRawdata(metadata.id, range)
-            const response = new Response(object.body, object)
-            response.headers.set('Content-Type', metadata.mimeType)
-            response.headers.set('ETag', `"${metadata.md5Checksum}"`)
-            response.headers.set('Last-Modified', new Date(metadata.modifiedTime).toGMTString())
-            response.headers.set('Cache-Control', 'public, max-age=31536000')
-            response.headers.delete('Content-Disposition')
-            return response
+            // HTML format
+            return new Response(render(objects), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'text/html; charset=utf-8'
+                }
+            })
         }
+
+        // Image file response
+        if (metadata.mimeType.startsWith('image/')) {
+            // tempLink expires after one hour
+            const tempLink = metadata.thumbnailLink.replace(/=s\d+$/, '')
+            url.param = url.param || '=s0' // thumbnail or original
+            return await fetch(new Request(tempLink + url.param, request))
+        }
+
+        // Other file response
+        const range = request.headers.get('Range')
+        const object = await gd.getRawdata(metadata.id, range)
+        const response = new Response(object.body, object)
+        response.headers.set('Content-Type', metadata.mimeType)
+        response.headers.set('ETag', `"${metadata.md5Checksum}"`)
+        response.headers.set('Last-Modified', new Date(metadata.modifiedTime).toGMTString())
+        response.headers.set('Cache-Control', 'public, max-age=31536000')
+        response.headers.delete('Content-Disposition')
+        return response
+
     } catch (e) {
-        return new Response(e.message, {
-            status: e.code || 500
+        const status = e.code || 500
+        return new Response(status + ': ' + e.message, {
+            status
         })
     }
 }
