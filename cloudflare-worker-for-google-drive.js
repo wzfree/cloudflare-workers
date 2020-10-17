@@ -4,7 +4,6 @@
  * ----------------------------------------------
  */
 const config = {
-    restful: false, // Render a html page if false
     root_id: 'root', // root or directory id
     client_id: '162524057780-ujb7as2j25g34eI8rQRt3Th8ma0f.apps.googleusercontent.com', // faked
     client_secret: 'XtDkt5I9NohNc9Oziz9IALfV', // faked
@@ -24,7 +23,7 @@ const tpl = `
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
   <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAS1BMVEUAAAAAwlAAw08Aw1AAzFcAwk8AwVMAwlAAwlAAwlAAwlAAwlAAxFAAwlAAwlAAwlAAw1AAw1AAwlAAwk4AwlAAwk8AwlAAwFEAwlCXGrq0AAAAGHRSTlMAu3auBS0T9dNP7p8f4cWLYwvpPb+X2jlBNxsqAAAA60lEQVQ4y62TWRKDMAxDTRKWsrVlaXX/kzbjJtZMyCfvS/aAUeQgNxJ8Y/ggVxxAnFyYewBDo2zoZynxiPi/3k2RBzBNwEOUrMh7wdh1G5a3llmRJ/ASeQFPiWRFWmCVyAq0IqbIoSUfpOJAfqpQtJTsjx1tS3moHZGJBy9jCQP6A9gtuj13Z1uHi5EPQStVqSvssFaVupzJiVnF7tdcLS4SO6tzSXkBJltHDRnxCSmZGqM6sWwJXYaPJsbtkO4/PXo70zoKzpRwA7RcB2mBw0R5x/KLNqp+S08zwxtPNq5bHKq46l9HfJBb+AHKIRqF8dHKIQAAAABJRU5ErkJggg=="/>
   <title>Google Drive</title>
-  <style>*{box-sizing:border-box}@font-face{font-family:Montserrat;src:url(https://cdn.unpkg.net/font/montserrat.woff2) format('woff2')}body{font:15px/1.3 Montserrat,Helvetica,Arial;background:#fcfcfc}h3,main{background:#fff;max-width:960px;margin:10px auto;border-radius:5px}h3{font-size:18px;padding:15px;border:#48d582 1px solid;color:#00c250}a{color:inherit;text-decoration:none}h3 a,main a{display:flex;align-items:center}main a:first-child{border-top-left-radius:5px;border-top-right-radius:5px}main a:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px}svg{margin-right:10px}main{border:#ccc 1px solid}main img{margin-right:10px}main a{padding:12px 15px;border-bottom:#ddd 1px solid;transition:all .3s}main a:last-child{border:0}main a:hover{background:#fafafa}main a>div{margin-left:10px}main a>div:first-child{flex:1;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center}main a>div:not(:first-child){color:#ccc;font-size:13px}footer{text-align:center;color:#999;font-size:13px}footer a:hover{text-decoration:underline}</style>
+  <style>*{box-sizing:border-box}@font-face{font-family:Montserrat;src:url(https://cdn.unpkg.net/font/montserrat.woff2) format('woff2')}body{font:15px/1.3 Montserrat,Helvetica,Arial;background:#fcfcfc}h3,main{background:#fff;max-width:960px;margin:10px auto;border-radius:5px}h3{font-size:18px;padding:15px;border:#48d582 1px solid;color:#00c250}a{color:inherit;text-decoration:none}h3 a,main a{display:flex;align-items:center}main a:first-child{border-top-left-radius:5px;border-top-right-radius:5px}main a:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px}svg{margin-right:10px}main{border:#ccc 1px solid}main img{margin-right:10px}main a{padding:12px 15px;border-bottom:#ddd 1px solid;transition:all .3s}main a:last-child{border:0}main a:hover{background:#fafafa}main a>div{margin-left:10px}main a>div:first-child{flex:1;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center}main a>div:not(:first-child){color:#ccc;font-size:13px}footer{text-align:center;color:#999;font-size:13px}footer a:hover{text-decoration:underline}@media (max-width:640px){main a>div:last-child{display:none}}</style>
 </head>
 <body>
   <h3><a href="/"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="30" height="30"><path d="M366 160l-9 15-256 416-10 16 9 17 128 224 9 16h550l9-16 128-224 9-17-10-16-256-416-9-15zm75 64h181l217 352H658zm-57 29l95 155-222 361-92-161zm133 216l66 107H451zM412 640h429l-92 160H313z" fill="#00c250"/></svg>Google Drive</a></h3>
@@ -41,7 +40,7 @@ const tpl = `
 function render(data) {
     const frag = []
     data && data.forEach(entry => {
-        if (entry.mimeType == GoogleDrive.FOLDER_TYPE) {
+        if (entry.mimeType == GoogleDrive.folderType) {
             frag.push(`<a href="${entry.name}/">`)
             frag.push(`<div><img src="${entry.iconLink}"/><b>${entry.name}</b></div>`)
             frag.push(`<div>${formatDate(entry.modifiedTime)}</div>`)
@@ -77,13 +76,14 @@ function formatDate(v) {
 class GoogleDrive {
     constructor(config) {
         this.config = config
-        GoogleDrive.AUTH_API = 'https://www.googleapis.com/oauth2/v4/token'
-        GoogleDrive.DRIVE_API = 'https://www.googleapis.com/drive/v3/files'
-        GoogleDrive.FOLDER_TYPE = 'application/vnd.google-apps.folder'
-        GoogleDrive.META_CACHE = {
+        GoogleDrive.authApi = 'https://www.googleapis.com/oauth2/v4/token'
+        GoogleDrive.driveApi = 'https://www.googleapis.com/drive/v3/files'
+        GoogleDrive.folderType = 'application/vnd.google-apps.folder'
+        GoogleDrive.fileAttrs = 'id, name, mimeType, size, modifiedTime, description, iconLink, thumbnailLink, imageMediaMetadata'
+        GoogleDrive.metaCache = {
             '/': {
-                id: config.root_id,
-                mimeType: GoogleDrive.FOLDER_TYPE
+                id: config.root_id || 'root',
+                mimeType: GoogleDrive.folderType
             }
         }
     }
@@ -92,60 +92,42 @@ class GoogleDrive {
         path = path.startsWith('/') ? path : '/' + path
         path = path.endsWith('/') ? path : path + '/'
 
-        if (!GoogleDrive.META_CACHE[path]) {
+        if (!GoogleDrive.metaCache[path]) {
             let fullpath = '/'
-            let metadata = GoogleDrive.META_CACHE[fullpath]
+            let metadata = GoogleDrive.metaCache[fullpath]
             const fragments = this._trim(path, '/').split('/')
 
             for (let name of fragments) {
                 fullpath += name + '/'
 
-                if (!GoogleDrive.META_CACHE[fullpath]) {
+                if (!GoogleDrive.metaCache[fullpath]) {
                     name = decodeURIComponent(name).replace(/\'/g, "\\'")
-                    const result = await this._fetchDrive({
+                    const result = await this._queryDrive({
                         q: `'${metadata.id}' in parents and name = '${name}' and trashed = false`,
-                        fields: 'files(id, name, mimeType, size, modifiedTime, description, iconLink, thumbnailLink, shortcutDetails, md5Checksum)'
+                        fields: `files(${GoogleDrive.fileAttrs})`,
                     })
-                    GoogleDrive.META_CACHE[fullpath] = result.files[0]
+                    GoogleDrive.metaCache[fullpath] = result.files[0]
                 }
-                metadata = GoogleDrive.META_CACHE[fullpath]
+                metadata = GoogleDrive.metaCache[fullpath]
                 if (!metadata) break
             }
         }
-        return GoogleDrive.META_CACHE[path]
-    }
-
-    async getRawdata(id, range) {
-        const response = await fetch(GoogleDrive.DRIVE_API + '/' + id + '?alt=media', {
-            headers: {
-                Authorization: 'Bearer ' + (await this._getAccessToken()),
-                Range: range || ''
-            }
-        })
-        if (response.status >= 400) {
-            const result = await response.json()
-            const error = new Error(result.error.message)
-            error.code = response.status
-            throw error
-        }
-        return response
+        return GoogleDrive.metaCache[path]
     }
 
     async getObjects(id) {
-        if (!id) return
-
         let pageToken
         const list = []
         const params = {
             pageSize: 1000,
             q: `'${id}' in parents and trashed = false AND name != '.password'`,
-            fields: 'nextPageToken, files(id, name, mimeType, size, modifiedTime, description, iconLink, thumbnailLink, md5Checksum, shortcutDetails)',
-            orderBy: 'folder, name, modifiedTime desc'
+            fields: `nextPageToken, files(${GoogleDrive.fileAttrs})`,
+            orderBy: 'folder, name'
         }
 
         do {
             if (pageToken) params.pageToken = pageToken
-            const result = await this._fetchDrive(params)
+            const result = await this._queryDrive(params)
             pageToken = result.nextPageToken
             list.push(...result.files)
         } while (
@@ -154,20 +136,36 @@ class GoogleDrive {
         return list
     }
 
-    async _fetchDrive(params) {
-        const response = await fetch(GoogleDrive.DRIVE_API + '?' + this._encodeQueryString(params), {
+    async getRawContent(id, range) {
+        const response = await fetch(GoogleDrive.driveApi + '/' + id + '?alt=media', {
+            headers: {
+                Range: range || '',
+                Authorization: 'Bearer ' + (await this._getAccessToken())
+            }
+        })
+        if (response.status < 400) {
+            return response
+        }
+        const result = await response.json()
+        const error = new Error(result.error.message)
+        error.status = response.status
+        throw error
+    }
+
+    async _queryDrive(params) {
+        const driveUrl = GoogleDrive.driveApi + '?' + this._encodeQueryString(params)
+        const response = await fetch(driveUrl, {
             headers: {
                 Authorization: 'Bearer ' + (await this._getAccessToken())
             }
         })
-
         const result = await response.json()
         if (result.error) {
             if (result.error.message.startsWith('User Rate Limit Exceeded')) {
-                return this._fetchDrive(params)
+                return this._queryDrive(params)
             }
             const error = new Error(result.error.message)
-            error.code = response.status
+            error.status = response.status
             throw error
         }
         return result
@@ -177,26 +175,24 @@ class GoogleDrive {
         if (this.config.expires && this.config.expires > Date.now()) {
             return this.config.access_token
         }
-        const response = await fetch(GoogleDrive.AUTH_API, {
+        const response = await fetch(GoogleDrive.authApi, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
             body: this._encodeQueryString({
                 client_id: this.config.client_id,
                 client_secret: this.config.client_secret,
                 refresh_token: this.config.refresh_token,
                 grant_type: 'refresh_token'
-            })
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
         })
-
         const result = await response.json()
         if (result.error) {
             const error = new Error(result.error_description)
-            error.code = response.status
+            error.status = response.status
             throw error
         }
-
         this.config.expires = Date.now() + 3500 * 1000
         this.config.access_token = result.access_token
         return this.config.access_token
@@ -237,16 +233,16 @@ async function handleRequest(request) {
 
         const metadata = await gd.getMetadata(url.pathname)
         if (!metadata) {
-            return new Response('404: File not found', {
+            return new Response(`404: Path '${url.pathname}' not found.`, {
                 status: 404
             })
         }
 
         // Folder response
-        if (metadata.mimeType == GoogleDrive.FOLDER_TYPE) {
+        if (metadata.mimeType == GoogleDrive.folderType) {
             const objects = await gd.getObjects(metadata.id)
             // JSON format
-            if (config.restful) {
+            if (request.method === 'POST') {
                 return new Response(JSON.stringify(objects))
             }
             // HTML format
@@ -268,12 +264,12 @@ async function handleRequest(request) {
 
         // Other file response
         const range = request.headers.get('Range')
-        const object = await gd.getRawdata(metadata.id, range)
+        const object = await gd.getRawContent(metadata.id, range)
         const response = new Response(object.body, object)
+        response.headers.set('Access-Control-Allow-Origin', '*')
         response.headers.set('Content-Type', metadata.mimeType)
-        response.headers.set('ETag', `"${metadata.md5Checksum}"`)
         response.headers.set('Last-Modified', new Date(metadata.modifiedTime).toGMTString())
-        response.headers.set('Cache-Control', 'public, max-age=31536000')
+        response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate')
         response.headers.delete('Content-Disposition')
         return response
 

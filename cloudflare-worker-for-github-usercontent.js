@@ -9,5 +9,9 @@ async function handleRequest(request) {
     }
     url.hostname = 'raw.githubusercontent.com'
     url.pathname = url.pathname.replace(/^\/([^/]+\/[^/]+)\/(.+)$/, "$1/master/$2")
-    return await fetch(new Request(url, request))
+
+    let response = await fetch(new Request(url, request))
+    response = new Response(response.body, response)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    return response
 }

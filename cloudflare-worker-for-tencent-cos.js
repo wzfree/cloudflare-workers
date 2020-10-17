@@ -4,16 +4,16 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request))
 })
 
-/**
- * Respond to the request
- * @param {Request} request
- */
 async function handleRequest(request) {
     const url = new URL(request.url)
     url.host = upstream
 
-    const response = await fetch(new Request(url, request))
-    if (response.status < 400) return response
+    let response = await fetch(new Request(url, request))
+    if (response.status < 400) {
+        response = new Response(response.body, response)
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        return response
+    }
 
     const text = await response.text()
     const message = text.match(/<Message>(.+)<\/Message>/)
