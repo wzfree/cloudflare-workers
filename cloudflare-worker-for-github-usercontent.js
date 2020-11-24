@@ -4,11 +4,14 @@ addEventListener('fetch', event => {
 
 async function handleRequest(request) {
     const url = new URL(request.url)
-    if (url.pathname === '/') {
-        return await fetch('https://cdn.unpkg.net/index.html')
-    }
     url.hostname = 'raw.githubusercontent.com'
-    url.pathname = url.pathname.replace(/^\/([^/]+\/[^/]+)\/(.+)$/, "$1/master/$2")
+
+    if (url.pathname === '/') {
+        return new Response('400: Invalid request', {
+            status: 400,
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        })
+    }
 
     let response = await fetch(new Request(url, request))
     response = new Response(response.body, response)
