@@ -5,6 +5,7 @@ addEventListener('fetch', event => {
 async function handleRequest(request) {
     const url = new URL(request.url)
     url.hostname = 'raw.githubusercontent.com'
+    url.pathname = url.pathname.replace('@', '/')
 
     if (url.pathname === '/') {
         return new Response('400: Invalid request', {
