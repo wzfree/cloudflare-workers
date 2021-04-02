@@ -1,4 +1,4 @@
-const upstream = '<bucket>.cos.accelerate.myqcloud.com'
+const upstream = '<bucket>.cos.<region>.myqcloud.com'
 
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request))

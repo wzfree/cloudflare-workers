@@ -5,9 +5,9 @@
  */
 const config = {
     root_id: 'root', // root or directory id
-    client_id: '162524057780-ujb7as2j25g34eI8rQRt3Th8ma0f.apps.googleusercontent.com', // faked
-    client_secret: 'XtDkt5I9NohNc9Oziz9IALfV', // faked
-    refresh_token: '1//0e_CgYIARjZn8SSNwF-L9IrurlUlnFZ-_LrG18PhQBLJzi8Y8B-pHbRAAGA4UxVP-523gjk4hm7udBjkEMWYipdDfU8h7PF8Y', // faked
+    client_id: '162524057780-ujb4as2j25g34eI8rQRt3th8ma0f.apps.googleusercontent.com', // faked
+    client_secret: 'XtDkt529NohNc9Oziz9IALfV', // faked
+    refresh_token: '1//0e_CgYIaRjZn8SSNwF-L9IrurlUlnFZ-_LrG18PhQBLJzi8Y8B-pHbRAAGA4UxVP-523gjk4hm7udBjkEMWYipdDfU8h7PF8Y', // faked
 }
 
 /*
