@@ -1,7 +1,7 @@
 # Cloudflare Workers Collection
 
 ## cloudflare-worker-for-google-drive
-用于创建 Google Drive 云端硬盘的索引页面，此脚本轻巧纯净，除字体以外未引用任何第三方类库。示例：https://gd.force.workers.dev ，GET 请求（通常指浏览器访问）时返回 HTML 页面，POST 请求时返回 JSON 格式数据。另外：可使用我开发的另一款 Google Drive Connector 公共服务：https://unpkg.net ，无需任何开发、一键连接谷歌云盘。
+用于创建 Google Drive 云端硬盘的索引页面，此脚本轻巧纯净，除字体以外未引用任何第三方类库。示例：https://gd.force.workers.dev ，GET 请求（通常指浏览器访问）时返回 HTML 页面，POST 请求时返回 JSON 格式数据。（另外：可以使用另一款 Google Drive Connector 公共服务：https://unpkg.net ，无需任何开发、一键连接谷歌云盘。）
 
 ### 使用方法
 1. 打开 `cloudflare-worker-for-google-drive.js` 文件；
