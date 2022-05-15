@@ -200,7 +200,7 @@ class GoogleDrive {
 
   _encodeQueryString(data) {
     const result = []
-    for (let k in data) {
+    for (const k in data) {
       result.push(encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
     }
     return result.join('&')

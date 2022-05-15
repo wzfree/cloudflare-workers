@@ -26,7 +26,7 @@ const PREFLIGHT_INIT = {
 function makeRes(body, status = 200, headers = {}) {
   headers['--ver'] = JS_VER
   headers['access-control-allow-origin'] = '*'
-  return new Response(body, {status, headers})
+  return new Response(body, { status, headers })
 }
 
 
@@ -36,7 +36,7 @@ function makeRes(body, status = 200, headers = {}) {
 function newUrl(urlStr) {
   try {
     return new URL(urlStr)
-  } catch (err) {
+  } catch (_) {
     return null
   }
 }
@@ -52,11 +52,11 @@ addEventListener('fetch', e => {
 /**
  * @param {FetchEvent} e
  */
-async function fetchHandler(e) {
+function fetchHandler(e) {
   const req = e.request
   const urlStr = req.url
   const urlObj = new URL(urlStr)
-  const path = urlObj.href.substr(urlObj.origin.length)
+  const path = urlObj.href.substring(urlObj.origin.length)
 
   if (urlObj.protocol === 'http:') {
     urlObj.protocol = 'https:'
@@ -67,19 +67,19 @@ async function fetchHandler(e) {
   }
 
   if (path.startsWith('/http/')) {
-    return httpHandler(req, path.substr(6))
+    return httpHandler(req, path.substring(6))
   }
 
   switch (path) {
-  case '/http':
-    return makeRes('请更新 cfworker 到最新版本!')
-  case '/ws':
-    return makeRes('not support', 400)
-  case '/works':
-    return makeRes('it works')
-  default:
-    // static files
-    return fetch(ASSET_URL + path)
+    case '/http':
+      return makeRes('请更新 cfworker 到最新版本!')
+    case '/ws':
+      return makeRes('not support', 400)
+    case '/works':
+      return makeRes('it works')
+    default:
+      // static files
+      return fetch(ASSET_URL + path)
   }
 }
 
@@ -96,15 +96,13 @@ function httpHandler(req, pathname) {
 
   // preflight
   if (req.method === 'OPTIONS' &&
-      reqHdrRaw.has('access-control-request-headers')
+    reqHdrRaw.has('access-control-request-headers')
   ) {
     return new Response(null, PREFLIGHT_INIT)
   }
 
   let acehOld = false
-  let rawSvr = ''
   let rawLen = ''
-  let rawEtag = ''
 
   const reqHdrNew = new Headers(reqHdrRaw)
   reqHdrNew.set('x-jsproxy', '1')
@@ -112,22 +110,22 @@ function httpHandler(req, pathname) {
   // 此处逻辑和 http-dec-req-hdr.lua 大致相同
   // https://github.com/EtherDream/jsproxy/blob/master/lua/http-dec-req-hdr.lua
   const refer = reqHdrNew.get('referer')
-  const query = refer.substr(refer.indexOf('?') + 1)
+  const query = refer.substring(refer.indexOf('?') + 1)
   if (!query) {
     return makeRes('missing params', 403)
   }
   const param = new URLSearchParams(query)
 
   for (const [k, v] of Object.entries(param)) {
-    if (k.substr(0, 2) === '--') {
+    if (k.substring(0, 2) === '--') {
       // 系统信息
-      switch (k.substr(2)) {
-      case 'aceh':
-        acehOld = true
-        break
-      case 'raw-info':
-        [rawSvr, rawLen, rawEtag] = v.split('|')
-        break
+      switch (k.substring(2)) {
+        case 'aceh':
+          acehOld = true
+          break
+        case 'raw-info':
+          rawLen = v.split('|')[1]
+          break
       }
     } else {
       // 还原 HTTP 请求头
@@ -177,9 +175,9 @@ async function proxy(urlObj, reqInit, acehOld, rawLen, retryTimes) {
 
   for (const [k, v] of resHdrOld.entries()) {
     if (k === 'access-control-allow-origin' ||
-        k === 'access-control-expose-headers' ||
-        k === 'location' ||
-        k === 'set-cookie'
+      k === 'access-control-expose-headers' ||
+      k === 'location' ||
+      k === 'set-cookie'
     ) {
       const x = '--' + k
       resHdrNew.set(x, v)
@@ -240,10 +238,10 @@ async function proxy(urlObj, reqInit, acehOld, rawLen, retryTimes) {
   resHdrNew.delete('clear-site-data')
 
   if (status === 301 ||
-      status === 302 ||
-      status === 303 ||
-      status === 307 ||
-      status === 308
+    status === 302 ||
+    status === 303 ||
+    status === 307 ||
+    status === 308
   ) {
     status = status + 10
   }
@@ -280,7 +278,7 @@ async function parseYtVideoRedir(urlObj, newLen, res) {
   try {
     const data = await res.text()
     urlObj = new URL(data)
-  } catch (err) {
+  } catch (_) {
     return null
   }
   if (!isYtUrl(urlObj)) {
